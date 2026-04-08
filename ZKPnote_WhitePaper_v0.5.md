@@ -120,7 +120,7 @@ The digital economy has made content creation more accessible than ever. But it 
 
 - **Originality is in crisis.** Generative AI tools can produce polished articles, guides, frameworks, and entire books in seconds. The volume of AI-generated content flooding the internet has made it genuinely difficult to distinguish what is original from what is derivative. When anyone can prompt an LLM to produce content that resembles — or outright replicates — an expert's original work, the concept of authorship itself is under threat. Without a verifiable, timestamped record of creation, there is no way to prove who wrote something first. This is where blockchain enters the picture: a public, immutable ledger that provides digital proof of when a piece of content was created and by whom — visible to anyone, forgeable by no one.
 
-- **Traditional IP protection is prohibitively expensive.** The conventional tools for proving content ownership — patents, trademarks, copyright registrations, and legal filings — cost hundreds to thousands of dollars per claim and take weeks or months to process. A patent application averages **$5,000–$15,000** in legal fees. A copyright registration costs **$35–$85** per work and requires government processing time. For a creator producing dozens of original ideas per month — recipes, frameworks, training guides, prompt libraries — this model is completely impractical. The legal system was designed for an era when people published one book or filed one patent at a time, not for the modern creator who generates original content daily. ZKPnote replaces this entire cost structure with a blockchain transaction that costs less than a tenth of a penny and settles in under a second. A creator can anchor proof of authorship for every idea they produce, every day, for **under $1 per year** — something that would cost tens of thousands of dollars through traditional legal channels.
+- **Traditional IP protection is prohibitively expensive.** The conventional tools for proving content ownership — patents, trademarks, copyright registrations, and legal filings — cost hundreds to thousands of dollars per claim and take weeks or months to process. A patent application averages **$5,000–$15,000** in legal fees. A copyright registration costs **$35–$85** per work and requires government processing time. For a creator producing dozens of original ideas per month — recipes, frameworks, training guides, prompt libraries — this model is completely impractical. The legal system was designed for an era when people published one book or filed one patent at a time, not for the modern creator who generates original content daily. ZKPnote replaces this entire cost structure with a blockchain transaction that costs roughly **$0.21** and settles in under a second. A creator can anchor proof of authorship for their most important ideas for **under $35 per year** — something that would cost tens of thousands of dollars through traditional legal channels.
 
 - **No proof of authorship.** Even without the AI originality crisis, a creator who writes an original recipe, workout guide, or article in a conventional note app has no verifiable evidence that they authored it first. Anyone can copy-paste, publish, and claim ownership. The blockchain ledger changes this: if a dispute arises, the creator can point to an immutable on-chain record showing their content hash was anchored before the alleged copy ever appeared. This is not a legal opinion or a platform's word — it is cryptographic, timestamped, publicly auditable proof.
 
@@ -229,42 +229,43 @@ ZKPnote has two layers of operation, each with distinct cost profiles:
 | Layer | What Happens | Cost to User |
 |:------|:-------------|:-------------|
 | **Cloud sync** | Notes are encrypted and synced to the cloud API automatically on every edit | **Free** |
-| **On-chain proof** | User clicks "Push" to anchor a cryptographic hash on Solana as immutable proof of authorship | **~$0.001 per push** |
+| **On-chain proof** | User clicks "Push" to anchor a cryptographic hash on Solana as immutable proof of authorship | **~$0.21 per note** |
 
-Cloud sync is continuous and invisible. On-chain anchoring is a deliberate, manual action — users choose when to create permanent proof.
+Cloud sync is continuous and invisible. On-chain anchoring is a deliberate, manual action — users choose when to create permanent proof. Each note receives its own SHA-256 hash (`SHA-256(title + "\n" + content)`) stored in a dedicated on-chain account (PDA). The first wallet to register a given hash wins — establishing provenance on a first-come, first-served basis. Anyone can later verify content against the chain using the public `/verify` page, and similarity search detects near-duplicate proved content.
 
 #### On-Chain Cost Breakdown
 
 | Operation | SOL Cost | USD Equivalent |
 |:----------|:---------|:---------------|
-| First push *(account creation + rent deposit)* | ~0.0015 SOL | ~$0.21 *(one-time)* |
-| Each subsequent push *(hash update)* | ~0.00001 SOL | ~$0.001 |
+| Prove a note *(account creation + rent deposit)* | ~0.0015 SOL | ~$0.21 *(per note)* |
 | Marketplace purchase *(execute_sale)* | ~0.00001 SOL + item price | ~$0.001 + item price |
 
 <sup>USD estimates based on SOL at $140. Actual costs vary with SOL price and network conditions.</sup>
 
-The first push is more expensive because Solana requires a one-time rent deposit to create the on-chain vault account (84 bytes of storage). After that, updates cost only the base transaction fee plus a small priority fee — well under a tenth of a penny.
+Each proof creates a new on-chain account (PDA) seeded by the note's content hash. The cost per note includes Solana's rent-exempt deposit for the account plus the base transaction fee. Because each note gets its own proof account, the cost is consistent whether it's your first note or your thousandth.
 
 #### Estimated Annual Cost by Usage
 
-| Usage Pattern | Pushes | Annual Cost |
-|:--------------|:-------|:------------|
-| Casual | 1/week | **~$0.05** |
-| Regular | 3/week | **~$0.16** |
-| Heavy | 1/day | **~$0.37** |
-| Power user | 3/day | **~$1.09** |
+Users choose which notes to prove — not every note needs on-chain anchoring. Most users prove only their highest-value content: original frameworks, IP-sensitive drafts, marketplace listings, and ideas worth protecting.
 
-> Even the most active power users spend roughly **one dollar per year** on blockchain verification — orders of magnitude less than any subscription note-taking service.
+| Usage Pattern | Proofs | Annual Cost |
+|:--------------|:-------|:------------|
+| Casual | 1/month | **~$2.52** |
+| Regular | 1/week | **~$10.92** |
+| Heavy | 3/week | **~$32.76** |
+| Power user | 1/day | **~$76.65** |
+
+> Even heavy users who prove three notes per week spend roughly **$33 per year** — a fraction of what traditional IP protection costs for a single claim, and significantly less than most note-taking subscriptions.
 
 ---
 
 ### Comparison: Note-Taking Services
 
-Traditional note-taking apps charge monthly or annual subscriptions for features like cloud sync, cross-device access, and collaboration. ZKPnote provides all of these capabilities with no subscription fee.
+Traditional note-taking apps charge monthly or annual subscriptions for features like cloud sync, cross-device access, and collaboration. ZKPnote provides all of these capabilities with no subscription fee — cloud sync and encryption are free, and on-chain proof is a small per-note cost only when the user chooses to anchor.
 
 | Service | Annual Cost | What You Get |
 |:--------|:-----------|:-------------|
-| **ZKPnote** | **$0 – $1.09** | **Unlimited notes, E2E encryption, cloud sync, blockchain proof of originality, marketplace access** |
+| **ZKPnote** | **$0 – $33** | **Unlimited notes, E2E encryption, cloud sync, blockchain proof of originality, marketplace access** |
 | Notion Plus | $96 | Cloud notes, collaboration, databases |
 | Evernote Starter | $99 | Cloud notes, search, 1 notebook |
 | Evernote Advanced | $249.99 | Everything + 20GB uploads, AI features |
@@ -276,7 +277,7 @@ Traditional note-taking apps charge monthly or annual subscriptions for features
 | Apple Notes (iCloud 50GB) | $11.88 | Basic notes with iCloud sync |
 | Apple Notes (iCloud 200GB) | $35.88 | Notes with expanded storage |
 
-ZKPnote is **30x to 250x cheaper** than the paid tier of every major note-taking service — and it's the only one that provides cryptographic proof of authorship. The closest competitor in privacy, Standard Notes, charges $90–$120/year for end-to-end encryption but offers no blockchain verification and no marketplace.
+Even at heavy usage (3 proofs/week), ZKPnote costs roughly **$33/year** — significantly less than Standard Notes ($90–$120), Evernote ($99–$250), or Notion ($96), and it's the only service that provides cryptographic proof of authorship. For casual users who prove a handful of important notes per month, the cost drops to under $3/year. The closest competitor in privacy, Standard Notes, charges $90–$120/year for end-to-end encryption but offers no blockchain verification and no marketplace.
 
 ---
 
